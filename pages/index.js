@@ -1,115 +1,146 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import { useState } from 'react'
+import { useRouter } from 'next/router'
+import CustomCursor from '../components/CustomCursor'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'hello' // Use environment variable for password
 
-export default function Home() {
+export default function LoginPage() {
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [showPasswordInput, setShowPasswordInput] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  const handleAdminLogin = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+
+    if (password === ADMIN_PASSWORD) {
+      router.push('/admin')  // Redirect to admin page
+    } else {
+      setError('Incorrect password, try again!')
+    }
+
+    setLoading(false)
+  }
+
+  const handleGuestLogin = () => {
+    router.push('/view')  // Redirect to guest view
+  }
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    
+    <div  className="relative min-h-screen flex justify-center items-center overflow-hidden bg-gray-950 p-4 cursor-none">
+      <CustomCursor/> 
+      {/* Simple "stars" using multiple tiny divs */}
+      {Array.from({ length: 50 }).map((_, i) => (
+        <div
+          key={i}
+          className="absolute bg-white rounded-full"
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: `${Math.random() * 2 + 1}px`,
+            height: `${Math.random() * 2 + 1}px`,
+            opacity: Math.random(),
+            animation: `twinkle ${Math.random() * 5 + 5}s infinite ease-in-out`
+          }}
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              pages/index.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      ))}
+
+      {/* Base dark background */}
+      <div className="absolute inset-0 bg-[url('/night-sky.jpg')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-gradient-to-t from-blue-900/10 via-blue-950/40 to-gray-950" />
+
+      {/* First star layer */}
+      <div className="absolute inset-0 bg-[url('/night-sky1.png')] bg-cover bg-center opacity-100 animate-twinkle1" />
+
+      {/* Second star layer */}
+      <div className="absolute inset-0 bg-[url('/night-sky2.png')] bg-cover bg-center opacity-0 animate-twinkle2" />
+
+      {/* Third star layer */}
+      <div className="absolute inset-0 bg-[url('/night-sky3.png')] bg-cover bg-center opacity-0 animate-twinkle3" />
+
+      {/* Login box */}
+      <div className="relative z-10 max-w-md w-full backdrop-blur-md bg-white/10 p-8 rounded-2xl shadow-2xl">
+        <h1 className="text-2xl text-white font-bold text-center mb-6">Welcome</h1>
+
+        {error && <div className="text-red-400 text-center mb-4">{error}</div>}
+
+        {/* Admin + Guest Buttons */}
+        {!showPasswordInput && (
+          <div className="mb-6 text-center space-y-4">
+            <button
+              onClick={() => setShowPasswordInput(true)}
+              className="bg-white text-gray-900 py-3 px-6 rounded-lg hover:bg-gray-300 w-full font-semibold transition cursor-none"
+            >
+              Admin Login
+            </button>
+
+            <button
+              onClick={handleGuestLogin}
+              className="bg-white text-gray-900 py-3 px-6 rounded-lg hover:bg-gray-300 w-full font-semibold transition cursor-none"
+            >
+              Guest View
+            </button>
+          </div>
+        )}
+
+        {/* Admin Login (password input) */}
+        {showPasswordInput && (
+          <form onSubmit={handleAdminLogin} className="space-y-6">
+            <div>
+              <label htmlFor="password" className="block text-lg font-medium text-white">Password</label>
+              <input
+                id="password"
+                type="password"
+                className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-white"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  if (error) setError('')  // clear error on typing
+                }}
+                
+                
+              />
+            </div>
+
+            <button
+              type="submit"
+              className={`w-full bg-white text-gray-900 py-3 rounded-lg mt-4 hover:bg-gray-300 font-semibold transition ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={loading}
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
+          </form>
+        )}
+      </div>
+
+      <style jsx>{`
+        @keyframes twinkle1 {
+          0%, 50%, 100% { opacity: 1; }
+          25%, 75% { opacity: 0; }
+        }
+        @keyframes twinkle2 {
+          0%, 25%, 75%, 100% { opacity: 1; }
+          50% { opacity: 0.2; }
+        }
+        @keyframes twinkle3 {
+          0%, 50%, 100% { opacity: 0.6; }
+          25%, 75% { opacity: 0.2; }
+        }
+        .animate-twinkle1 {
+          animation: twinkle1 10s infinite ease-in-out;
+        }
+        .animate-twinkle2 {
+          animation: twinkle2 10s infinite ease-in-out;
+        }
+        .animate-twinkle3 {
+          animation: twinkle3 10s infinite ease-in-out;
+        }
+      `}</style>
     </div>
-  );
+  )
 }
